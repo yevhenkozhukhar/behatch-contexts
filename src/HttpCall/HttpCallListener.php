@@ -1,32 +1,27 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\HttpCall;
 
-use Behat\Behat\EventDispatcher\Event\StepTested;
 use Behat\Behat\EventDispatcher\Event\AfterStepTested;
+use Behat\Behat\EventDispatcher\Event\StepTested;
 use Behat\Behat\Tester\Result\ExecutedStepResult;
 use Behat\Mink\Mink;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class HttpCallListener implements EventSubscriberInterface
 {
-    private $contextSupportedVoter;
-
-    private $httpCallResultPool;
-
-    private $mink;
-
-    public function __construct(ContextSupportedVoter $contextSupportedVoter, HttpCallResultPool $httpCallResultPool, Mink $mink)
-    {
-        $this->contextSupportedVoter = $contextSupportedVoter;
-        $this->httpCallResultPool = $httpCallResultPool;
-        $this->mink = $mink;
+    public function __construct(
+        private ContextSupportedVoter $contextSupportedVoter,
+        private HttpCallResultPool $httpCallResultPool,
+        private Mink $mink
+    ) {
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-           StepTested::AFTER => 'afterStep'
+            StepTested::AFTER => 'afterStep'
         ];
     }
 
@@ -54,9 +49,9 @@ class HttpCallListener implements EventSubscriberInterface
             $this->httpCallResultPool->store(
                 new HttpCallResult($this->mink->getSession()->getPage()->getContent())
             );
-        } catch (\LogicException $e) {
+        } catch (\LogicException) {
             // Mink has no response
-        } catch (\Behat\Mink\Exception\DriverException $e) {
+        } catch (\Behat\Mink\Exception\DriverException) {
             // No Mink
         }
     }

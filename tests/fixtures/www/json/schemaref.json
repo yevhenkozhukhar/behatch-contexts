@@ -9,7 +9,11 @@
         }
     },
     "properties": {
-        "foo": { "$ref": "#/definitions/url"},
-        "bar": { "$ref": "definitions.json#/definitions/https"}
+        "foo": {
+            "$ref": "#/definitions/url"
+        },
+        "bar": {
+            "$ref": "definitions.json#/definitions/https"
+        }
     }
 }

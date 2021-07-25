@@ -21,12 +21,12 @@ Feature: Browser Feature
         And I should see 2 rows in the 1st "table" table
 
         And the data in the 1st row of the "table" table should match:
-            | col1   | col2   |
-            | Lorem  | Ipsum  |
+            | col1  | col2  |
+            | Lorem | Ipsum |
 
         And the data in the 2nd row of the "table" table should match:
-            | col1   | col2   |
-            | Dolor  | Sit    |
+            | col1  | col2 |
+            | Dolor | Sit  |
 
     Scenario: Partial Testing rows
         Given I am on "/table/index.html"
@@ -35,12 +35,12 @@ Feature: Browser Feature
         And I should see 2 rows in the 1st "table" table
 
         And the data in the 1st row of the "table" table should match:
-            | col2   |
-            | Ipsum  |
+            | col2  |
+            | Ipsum |
 
         And the data in the 2nd row of the "table" table should match:
-            | col1   |
-            | Dolor  |
+            | col1  |
+            | Dolor |
 
     Scenario: Testing cell content
         Given I am on "/table/index.html"

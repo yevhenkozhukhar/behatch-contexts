@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\Context;
 
@@ -10,9 +11,9 @@ abstract class BaseContext extends RawMinkContext implements TranslatableContext
     use \Behatch\Html;
     use \Behatch\Asserter;
 
-    public static function getTranslationResources()
+    public static function getTranslationResources(): array|bool
     {
-        return glob(__DIR__ . '/../../i18n/*.xliff');
+        return \glob(__DIR__ . '/../../i18n/*.xliff');
     }
 
     /**
@@ -28,17 +29,16 @@ abstract class BaseContext extends RawMinkContext implements TranslatableContext
      * ru
      * @transform /^(0|[1-9]\d*)(?:ой|ий|ый|ей|й)?$/
      */
-    public function castToInt($count)
+    public function castToInt($count): int
     {
-        if (intval($count) < PHP_INT_MAX) {
-
-            return intval($count);
+        if ((int)$count < PHP_INT_MAX) {
+            return (int)$count;
         }
 
         return $count;
     }
 
-    protected function getMinkContext()
+    protected function getMinkContext(): \Behat\MinkExtension\Context\MinkContext
     {
         $context = new \Behat\MinkExtension\Context\MinkContext();
         $context->setMink($this->getMink());

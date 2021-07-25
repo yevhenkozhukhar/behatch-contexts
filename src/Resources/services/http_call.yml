@@ -4,7 +4,7 @@ services:
         arguments: ["@behatch.context_supported.voter", "@behatch.http_call.result_pool", "@mink"]
         public: false
         tags:
-            - { name: event_dispatcher.subscriber, priority: 0 }
+            - {name: event_dispatcher.subscriber, priority: 0}
 
     behatch.http_call.result_pool:
         class: Behatch\HttpCall\HttpCallResultPool
@@ -18,7 +18,7 @@ services:
         class: Behatch\HttpCall\RestContextVoter
         public: false
         tags:
-            - { name: behatch.context_voter }
+            - {name: behatch.context_voter}
 
     behatch.http_call.request:
         class: Behatch\HttpCall\Request
@@ -30,4 +30,4 @@ services:
         arguments: ["@behatch.http_call.result_pool", "@behatch.http_call.request"]
         public: false
         tags:
-            - { name: context.argument_resolver }
+            - {name: context.argument_resolver}

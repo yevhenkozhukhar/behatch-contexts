@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\Context;
 
-use Behatch\Xml\Dom;
 use Behat\Gherkin\Node\PyStringNode;
+use Behatch\Xml\Dom;
 
 class XmlContext extends BaseContext
 {
@@ -11,8 +12,9 @@ class XmlContext extends BaseContext
      * Checks that the response is correct XML
      *
      * @Then the response should be in XML
+     * @throws \DomException
      */
-    public function theResponseShouldBeInXml()
+    public function theResponseShouldBeInXml(): void
     {
         $this->getDom();
     }
@@ -21,8 +23,9 @@ class XmlContext extends BaseContext
      * Checks that the response is not correct XML
      *
      * @Then the response should not be in XML
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function theResponseShouldNotBeInXml()
+    public function theResponseShouldNotBeInXml(): void
     {
         $this->not(
             [$this, 'theResponseShouldBeInXml'],
@@ -33,18 +36,16 @@ class XmlContext extends BaseContext
     /**
      * Checks that the specified XML element exists
      *
-     * @param string $element
-     * @throws \Exception
-     * @return \DomNodeList
-     *
      * @Then the XML element :element should exist(s)
+     *
+     * @throws \Exception
      */
-    public function theXmlElementShouldExist($element)
+    public function theXmlElementShouldExist(string $element): \DomNodeList
     {
         $elements = $this->getDom()
             ->xpath($element);
 
-        if ($elements->length == 0) {
+        if ($elements->length === 0) {
             throw new \Exception("The element '$element' does not exist.");
         }
 
@@ -55,26 +56,31 @@ class XmlContext extends BaseContext
      * Checks that the specified XML element does not exist
      *
      * @Then the XML element :element should not exist(s)
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function theXmlElementShouldNotExist($element)
+    public function theXmlElementShouldNotExist($element): void
     {
-        $this->not(function () use($element) {
-            $this->theXmlElementShouldExist($element);
-        }, "The element '$element' exists.");
+        $this->not(
+            function () use ($element) {
+                $this->theXmlElementShouldExist($element);
+            },
+            "The element '$element' exists."
+        );
     }
 
     /**
      * Checks that the specified XML element is equal to the given value
      *
      * @Then the XML element :element should be equal to :text
+     * @throws \Exception
      */
-    public function theXmlElementShouldBeEqualTo($element, $text)
+    public function theXmlElementShouldBeEqualTo($element, $text): void
     {
         $elements = $this->theXmlElementShouldExist($element);
 
         $actual = $elements->item(0)->nodeValue;
 
-        if ($text != $actual) {
+        if ($text !== $actual) {
             throw new \Exception("The element value is '$actual'");
         }
     }
@@ -83,18 +89,23 @@ class XmlContext extends BaseContext
      * Checks that the specified XML element is not equal to the given value
      *
      * @Then the XML element :element should not be equal to :text
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function theXmlElementShouldNotBeEqualTo($element, $text)
+    public function theXmlElementShouldNotBeEqualTo($element, $text): void
     {
-        $this->not(function () use($element, $text) {
-            $this->theXmlElementShouldBeEqualTo($element, $text);
-        }, "The element '$element' value is not '$text'");
+        $this->not(
+            function () use ($element, $text) {
+                $this->theXmlElementShouldBeEqualTo($element, $text);
+            },
+            "The element '$element' value is not '$text'"
+        );
     }
 
     /**
      * Checks that the XML attribute on the specified element exists
      *
      * @Then the XML attribute :attribute on element :element should exist(s)
+     * @throws \Exception
      */
     public function theXmlAttributeShouldExist($attribute, $element)
     {
@@ -113,8 +124,9 @@ class XmlContext extends BaseContext
      * Checks that the XML attribute on the specified element does not exist
      *
      * @Then the XML attribute :attribute on element :element should not exist(s)
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function theXmlAttributeShouldNotExist($attribute, $element)
+    public function theXmlAttributeShouldNotExist($attribute, $element): void
     {
         $this->theXmlElementShouldNotExist("{$element}[@{$attribute}]");
     }
@@ -123,12 +135,13 @@ class XmlContext extends BaseContext
      * Checks that the XML attribute on the specified element is equal to the given value
      *
      * @Then the XML attribute :attribute on element :element should be equal to :text
+     * @throws \Exception
      */
-    public function theXmlAttributeShouldBeEqualTo($attribute, $element, $text)
+    public function theXmlAttributeShouldBeEqualTo($attribute, $element, $text): void
     {
         $actual = $this->theXmlAttributeShouldExist($attribute, $element);
 
-        if ($text != $actual) {
+        if ($text !== $actual) {
             throw new \Exception("The attribute value is '$actual'");
         }
     }
@@ -137,8 +150,9 @@ class XmlContext extends BaseContext
      * Checks that the XML attribute on the specified element is not equal to the given value
      *
      * @Then the XML attribute :attribute on element :element should not be equal to :text
+     * @throws \Exception
      */
-    public function theXmlAttributeShouldNotBeEqualTo($attribute, $element, $text)
+    public function theXmlAttributeShouldNotBeEqualTo($attribute, $element, $text): void
     {
         $actual = $this->theXmlAttributeShouldExist($attribute, $element);
 
@@ -151,14 +165,15 @@ class XmlContext extends BaseContext
      * Checks that the given XML element has N child element(s)
      *
      * @Then the XML element :element should have :count element(s)
+     * @throws \Exception
      */
-    public function theXmlElementShouldHaveNChildElements($element, $count)
+    public function theXmlElementShouldHaveNChildElements($element, $count): void
     {
         $elements = $this->theXmlElementShouldExist($element);
 
         $length = 0;
         foreach ($elements->item(0)->childNodes as $node) {
-            if ($node->hasAttributes() || (trim($node->nodeValue) != '')) {
+            if ($node->hasAttributes() || (\trim($node->nodeValue) !== '')) {
                 ++$length;
             }
         }
@@ -170,8 +185,9 @@ class XmlContext extends BaseContext
      * Checks that the given XML element contains the given value
      *
      * @Then the XML element :element should contain :text
+     * @throws \Exception
      */
-    public function theXmlElementShouldContain($element, $text)
+    public function theXmlElementShouldContain($element, $text): void
     {
         $elements = $this->theXmlElementShouldExist($element);
 
@@ -182,8 +198,9 @@ class XmlContext extends BaseContext
      * Checks that the given XML element does not contain the given value
      *
      * @Then the XML element :element should not contain :text
+     * @throws \Exception
      */
-    public function theXmlElementShouldNotContain($element, $text)
+    public function theXmlElementShouldNotContain($element, $text): void
     {
         $elements = $this->theXmlElementShouldExist($element);
 
@@ -194,13 +211,13 @@ class XmlContext extends BaseContext
      * Checks that the XML uses the specified namespace
      *
      * @Then the XML should use the namespace :namespace
+     * @throws \Exception
      */
-    public function theXmlShouldUseTheNamespace($namespace)
+    public function theXmlShouldUseTheNamespace($namespace): void
     {
-        $namespaces = $this->getDom()
-            ->getNamespaces();
+        $namespaces = $this->getDom()->getNamespaces();
 
-        if (!in_array($namespace, $namespaces)) {
+        if (!\in_array($namespace, $namespaces, true)) {
             throw new \Exception("The namespace '$namespace' is not used");
         }
     }
@@ -209,13 +226,13 @@ class XmlContext extends BaseContext
      * Checks that the XML does not use the specified namespace
      *
      * @Then the XML should not use the namespace :namespace
+     * @throws \Exception
      */
-    public function theXmlShouldNotUseTheNamespace($namespace)
+    public function theXmlShouldNotUseTheNamespace($namespace): void
     {
-        $namespaces = $this->getDom()
-            ->getNamespaces();
+        $namespaces = $this->getDom()->getNamespaces();
 
-        if (in_array($namespace, $namespaces)) {
+        if (\in_array($namespace, $namespaces, true)) {
             throw new \Exception("The namespace '$namespace' is used");
         }
     }
@@ -225,7 +242,7 @@ class XmlContext extends BaseContext
      *
      * @Then print last XML response
      */
-    public function printLastXmlResponse()
+    public function printLastXmlResponse(): void
     {
         echo (string)$this->getDom();
     }
@@ -233,21 +250,20 @@ class XmlContext extends BaseContext
     /**
      * @BeforeScenario
      */
-    public function beforeScenario()
+    public function beforeScenario(): void
     {
-        libxml_clear_errors();
-        libxml_use_internal_errors(true);
+        \libxml_clear_errors();
+        \libxml_use_internal_errors(true);
     }
 
     /**
      * @Then the XML feed should be valid according to its DTD
      */
-    public function theXmlFeedShouldBeValidAccordingToItsDtd()
+    public function theXmlFeedShouldBeValidAccordingToItsDtd(): void
     {
         try {
             $this->getDom();
-        }
-        catch(\DOMException $e) {
+        } catch (\DOMException $e) {
             throw new \RuntimeException($e->getMessage());
         }
     }
@@ -255,55 +271,53 @@ class XmlContext extends BaseContext
     /**
      * @Then the XML feed should be valid according to the XSD :filename
      */
-    public function theXmlFeedShouldBeValidAccordingToTheXsd($filename)
+    public function theXmlFeedShouldBeValidAccordingToTheXsd($filename): void
     {
-        if (is_file($filename)) {
-            $xsd = file_get_contents($filename);
-            $this->getDom()
-                ->validateXsd($xsd);
-        }
-        else {
+        if (\is_file($filename)) {
+            $xsd = \file_get_contents($filename);
+            $this->getDom()->validateXsd($xsd);
+        } else {
             throw new \RuntimeException("The xsd doesn't exist");
         }
     }
 
     /**
      * @Then the XML feed should be valid according to this XSD:
+     * @throws \DomException
      */
-    public function theXmlFeedShouldBeValidAccordingToThisXsd(PyStringNode $xsd)
+    public function theXmlFeedShouldBeValidAccordingToThisXsd(PyStringNode $xsd): void
     {
-        $this->getDom()
-            ->validateXsd($xsd->getRaw());
+        $this->getDom()->validateXsd($xsd->getRaw());
     }
 
     /**
      * @Then the XML feed should be valid according to the relax NG schema :filename
+     * @throws \DomException
      */
-    public function theXmlFeedShouldBeValidAccordingToTheRelaxNgSchema($filename)
+    public function theXmlFeedShouldBeValidAccordingToTheRelaxNgSchema($filename): void
     {
-        if (is_file($filename)) {
-            $ng = file_get_contents($filename);
+        if (\is_file($filename)) {
+            $ng = \file_get_contents($filename);
             $this->getDom()
                 ->validateNg($ng);
-        }
-        else {
+        } else {
             throw new \RuntimeException("The relax NG doesn't exist");
         }
     }
 
     /**
      * @Then the XML feed should be valid according to this relax NG schema:
+     * @throws \DomException
      */
-    public function theXmlFeedShouldBeValidAccordingToThisRelaxNgSchema(PyStringNode $ng)
+    public function theXmlFeedShouldBeValidAccordingToThisRelaxNgSchema(PyStringNode $ng): void
     {
-        $this->getDom()
-            ->validateNg($ng->getRaw());
+        $this->getDom()->validateNg($ng->getRaw());
     }
 
     /**
      * @Then the atom feed should be valid
      */
-    public function theAtomFeedShouldBeValid()
+    public function theAtomFeedShouldBeValid(): void
     {
         $this->theXmlFeedShouldBeValidAccordingToTheXsd(
             __DIR__ . '/../Resources/schemas/atom.xsd'
@@ -313,14 +327,17 @@ class XmlContext extends BaseContext
     /**
      * @Then the RSS2 feed should be valid
      */
-    public function theRss2FeedShouldBeValid()
+    public function theRss2FeedShouldBeValid(): void
     {
         $this->theXmlFeedShouldBeValidAccordingToTheXsd(
             __DIR__ . '/../Resources/schemas/rss-2.0.xsd'
         );
     }
 
-    private function getDom()
+    /**
+     * @throws \DomException
+     */
+    private function getDom(): Dom
     {
         $content = $this->getSession()->getPage()->getContent();
 

@@ -1,11 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\Xml;
 
 class Dom
 {
-    private $dom;
+    private \DomDocument $dom;
 
+    /**
+     * @throws \DomException
+     */
     public function __construct($content)
     {
         $this->dom = new \DomDocument();
@@ -19,33 +23,39 @@ class Dom
     public function __toString()
     {
         $this->dom->formatOutput = true;
+
         return $this->dom->saveXML();
     }
 
-    public function validate()
+    /**
+     * @throws \DomException
+     */
+    public function validate(): void
     {
         $this->dom->validate();
         $this->throwError();
     }
 
-    public function validateXsd($xsd)
+    /**
+     * @throws \DomException
+     */
+    public function validateXsd($xsd): void
     {
         $this->dom->schemaValidateSource($xsd);
         $this->throwError();
     }
 
-    public function validateNg($ng)
+    public function validateNg($ng): void
     {
         try {
             $this->dom->relaxNGValidateSource($ng);
             $this->throwError();
-        }
-        catch(\DOMException $e) {
+        } catch (\DOMException $e) {
             throw new \RuntimeException($e->getMessage());
         }
     }
 
-    public function xpath($element)
+    public function xpath($element): \DOMNodeList
     {
         $xpath = new \DOMXpath($this->dom);
         $this->registerNamespace($xpath);
@@ -53,10 +63,10 @@ class Dom
         $element = $this->fixNamespace($element);
         $elements = $xpath->query($element);
 
-        return ($elements === false) ? new \DOMNodeList() : $elements;
+        return $elements === false ? new \DOMNodeList() : $elements;
     }
 
-    private function registerNamespace(\DOMXpath $xpath)
+    private function registerNamespace(\DOMXpath $xpath): void
     {
         $namespaces = $this->getNamespaces();
 
@@ -81,10 +91,11 @@ class Dom
             }
             $element = preg_replace('/\/(\w+)(\[[^]]+\])?$/', '/rootns:$1$2', $element);
         }
+
         return $element;
     }
 
-    private function hasDefaultNamespace()
+    private function hasDefaultNamespace(): bool
     {
         $defaultNamespaceUri = $this->dom->lookupNamespaceURI(null);
         $defaultNamespacePrefix = $defaultNamespaceUri ? $this->dom->lookupPrefix($defaultNamespaceUri) : null;
@@ -92,20 +103,22 @@ class Dom
         return empty($defaultNamespacePrefix) && !empty($defaultNamespaceUri);
     }
 
-    public function getNamespaces()
+    public function getNamespaces(): array
     {
-        $xml = simplexml_import_dom($this->dom);
+        $xml = \simplexml_import_dom($this->dom);
+
         return $xml->getNamespaces(true);
     }
 
-    private function throwError()
+    /**
+     * @throws \DomException
+     */
+    private function throwError(): void
     {
-        $error = libxml_get_last_error();
-        if (!empty($error)) {
-            // https://bugs.php.net/bug.php?id=46465
-            if ($error->message != 'Validation failed: no DTD found !') {
-                throw new \DomException($error->message . ' at line ' . $error->line);
-            }
+        $error = \libxml_get_last_error();
+        // https://bugs.php.net/bug.php?id=46465
+        if (!empty($error) && $error->message !== 'Validation failed: no DTD found !') {
+            throw new \DomException($error->message . ' at line ' . $error->line);
         }
     }
 }

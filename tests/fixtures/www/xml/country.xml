@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<country xmlns="http://example.org/xsd/country" xmlns:country="http://example.org/xsd/country" xmlns:city="http://example.org/xsd/city" version="0.0.13" name="Japan">
+<country xmlns="http://example.org/xsd/country"
+         xmlns:city="http://example.org/xsd/city"
+         version="0.0.13"
+         name="Japan">
     <airports>
         <city:airport>
         </city:airport>

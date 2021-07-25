@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch;
 
@@ -6,61 +7,73 @@ use Behat\Mink\Exception\ExpectationException;
 
 trait Asserter
 {
-    protected function not(callable $callbable, $errorMessage)
+    /**
+     * @throws ExpectationException
+     */
+    protected function not(callable $callable, string $errorMessage): void
     {
         try {
-            $callbable();
-        }
-        catch (\Exception $e) {
+            $callable();
+        } catch (\Exception) {
             return;
         }
 
         throw new ExpectationException($errorMessage, $this->getSession()->getDriver());
     }
 
-    protected function assert($test, $message)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assert($test, string $message): void
     {
         if ($test === false) {
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
     }
 
-    protected function assertContains($expected, $actual, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertContains($expected, $actual, string $message = null): void
     {
-        $regex   = '/' . preg_quote($expected, '/') . '/ui';
+        $regex = '/' . \preg_quote($expected, '/') . '/ui';
 
         $this->assert(
-            preg_match($regex, $actual) > 0,
+            \preg_match($regex, $actual) > 0,
             $message ?: "The string '$expected' was not found."
         );
     }
 
-    protected function assertNotContains($expected, $actual, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertNotContains($expected, $actual, string $message = null): void
     {
         $message = $message ?: "The string '$expected' was found.";
 
-        $this->not(function () use($expected, $actual) {
+        $this->not(
+            function () use ($expected, $actual) {
                 $this->assertContains($expected, $actual);
-        }, $message);
-    }
-
-    protected function assertCount($expected, array $elements, $message = null)
-    {
-        $this->assert(
-            intval($expected) === count($elements),
-            $message ?: sprintf('%d elements found, but should be %d.', count($elements), $expected)
+            },
+            $message
         );
     }
 
-    protected function assertEquals($expected, $actual, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertCount($expected, array $elements, string $message = null): void
     {
         $this->assert(
-            $expected == $actual,
-            $message ?: "The element '$actual' is not equal to '$expected'"
+            (int)$expected === \count($elements),
+            $message ?: \sprintf('%d elements found, but should be %d.', \count($elements), $expected)
         );
     }
 
-    protected function assertSame($expected, $actual, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertEquals($expected, $actual, string $message = null): void
     {
         $this->assert(
             $expected === $actual,
@@ -68,7 +81,21 @@ trait Asserter
         );
     }
 
-    protected function assertArrayHasKey($key, $array, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertSame($expected, $actual, string $message = null): void
+    {
+        $this->assert(
+            $expected === $actual,
+            $message ?: "The element '$actual' is not equal to '$expected'"
+        );
+    }
+
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertArrayHasKey($key, $array, string $message = null): void
     {
         $this->assert(
             isset($array[$key]),
@@ -76,24 +103,39 @@ trait Asserter
         );
     }
 
-    protected function assertArrayNotHasKey($key, $array, $message = null)
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertArrayNotHasKey($key, $array, string $message = null): void
     {
         $message = $message ?: "The array has key '$key'";
 
-        $this->not(function () use($key, $array) {
-            $this->assertArrayHasKey($key, $array);
-        }, $message);
+        $this->not(
+            function () use ($key, $array) {
+                $this->assertArrayHasKey($key, $array);
+            },
+            $message
+        );
     }
 
-    protected function assertTrue($value, $message = 'The value is false')
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertTrue($value, string $message = 'The value is false'): void
     {
         $this->assert($value, $message);
     }
 
-    protected function assertFalse($value, $message = 'The value is true')
+    /**
+     * @throws ExpectationException
+     */
+    protected function assertFalse($value, string $message = 'The value is true'): void
     {
-        $this->not(function () use($value) {
-            $this->assertTrue($value);
-        }, $message);
+        $this->not(
+            function () use ($value) {
+                $this->assertTrue($value);
+            },
+            $message
+        );
     }
 }

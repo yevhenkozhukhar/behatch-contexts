@@ -1,14 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch;
-
-use Behat\MinkExtension\Context\RawMinkContext;
 
 trait Html
 {
     abstract protected function getSession($name = null);
 
-    protected function countElements($element, $index, $parent)
+    /**
+     * @throws \Exception
+     */
+    protected function countElements($element, $index, $parent): int
     {
         $page = $this->getSession()->getPage();
 
@@ -18,13 +20,16 @@ trait Html
         }
 
         $elements = $parents[$index - 1]->findAll('css', $element);
-        return count($elements);
+
+        return \count($elements);
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function findElement($selector, $locator, $index)
     {
         $page = $this->getSession()->getPage();
-
         $nodes = $page->findAll($selector, $locator);
 
         if (!isset($nodes[$index - 1])) {

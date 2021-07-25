@@ -54,7 +54,7 @@ Feature: Testing RESTContext
         Then the response should be empty
 
     Scenario: request parameter with dot
-        https://github.com/Behatch/contexts/issues/256
+    https://github.com/Behatch/contexts/issues/256
         When I send a POST request to "/rest/index.php" with parameters:
             | key     | value |
             | item.id | 1     |
@@ -76,8 +76,8 @@ Feature: Testing RESTContext
         Then I should not see "HTTP_XXX_LARGE_NUMERIC"
 
     Scenario: Case-insensitive header name
-        Like describe in the rfc2614 §4.2
-        https://tools.ietf.org/html/rfc2616#section-4.2
+    Like describe in the rfc2614 §4.2
+    https://tools.ietf.org/html/rfc2616#section-4.2
 
         When I send a GET request to "rest/index.php"
         Then the header "content-type" should contain "text"

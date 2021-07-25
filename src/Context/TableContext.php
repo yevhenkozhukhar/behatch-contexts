@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\Context;
 
@@ -10,13 +11,14 @@ class TableContext extends BaseContext
      * Checks that the specified table's columns match the given schema
      *
      * @Then the columns schema of the :table table should match:
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function theColumnsSchemaShouldMatch($table, TableNode $text)
+    public function theColumnsSchemaShouldMatch($table, TableNode $text): void
     {
         $columnsSelector = "$table thead tr th";
         $columns = $this->getSession()->getPage()->findAll('css', $columnsSelector);
 
-        $this->iShouldSeeColumnsInTheTable(count($text->getHash()), $table);
+        $this->iShouldSeeColumnsInTheTable(\count($text->getHash()), $table);
 
         foreach ($text->getHash() as $key => $column) {
             $this->assertEquals($column['columns'], $columns[$key]->getText());
@@ -27,21 +29,23 @@ class TableContext extends BaseContext
      * Checks that the specified table contains the given number of columns
      *
      * @Then (I )should see :count column(s) in the :table table
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
-    public function iShouldSeeColumnsInTheTable($count, $table)
+    public function iShouldSeeColumnsInTheTable($count, $table): void
     {
         $columnsSelector = "$table thead tr th";
         $columns = $this->getSession()->getPage()->findAll('css', $columnsSelector);
 
-        $this->assertEquals($count, count($columns));
+        $this->assertCount($count, $columns);
     }
 
     /**
      * Checks that the specified table contains the specified number of rows in its body
      *
      * @Then (I )should see :count rows in the :index :table table
+     * @throws \Exception
      */
-    public function iShouldSeeRowsInTheNthTable($count, $index, $table)
+    public function iShouldSeeRowsInTheNthTable($count, $index, $table): void
     {
         $actual = $this->countElements('tbody tr', $index, $table);
         $this->assertEquals($count, $actual);
@@ -51,8 +55,9 @@ class TableContext extends BaseContext
      * Checks that the specified table contains the specified number of rows in its body
      *
      * @Then (I )should see :count row(s) in the :table table
+     * @throws \Exception
      */
-    public function iShouldSeeRowsInTheTable($count, $table)
+    public function iShouldSeeRowsInTheTable($count, $table): void
     {
         $this->iShouldSeeRowsInTheNthTable($count, 1, $table);
     }
@@ -61,8 +66,9 @@ class TableContext extends BaseContext
      * Checks that the data of the specified row matches the given schema
      *
      * @Then the data in the :index row of the :table table should match:
+     * @throws \Exception
      */
-    public function theDataOfTheRowShouldMatch($index, $table, TableNode $text)
+    public function theDataOfTheRowShouldMatch($index, $table, TableNode $text): void
     {
         $rowsSelector = "$table tbody tr";
         $rows = $this->getSession()->getPage()->findAll('css', $rowsSelector);
@@ -72,14 +78,14 @@ class TableContext extends BaseContext
         }
 
         $cells = (array)$rows[$index - 1]->findAll('css', 'td');
-        $cells = array_merge((array)$rows[$index - 1]->findAll('css', 'th'), $cells);
+        $cells = \array_merge((array)$rows[$index - 1]->findAll('css', 'th'), $cells);
 
-        $hash = current($text->getHash());
+        $hash = \current($text->getHash());
 
-        foreach (array_keys($hash) as $columnName) {
+        foreach (\array_keys($hash) as $columnName) {
             // Extract index from column. ex "col2" -> 2
-            preg_match('/^col(?P<index>\d+)$/', $columnName, $matches);
-            $index = (int) $matches['index'] - 1;
+            \preg_match('/^col(?P<index>\d+)$/', $columnName, $matches);
+            $index = (int)$matches['index'] - 1;
 
             $this->assertEquals($hash[$columnName], $cells[$index]->getText());
         }
@@ -89,8 +95,9 @@ class TableContext extends BaseContext
      * Checks that the specified cell (column/row) of the table's body contains the specified text
      *
      * @Then the :colIndex column of the :rowIndex row in the :table table should contain :text
+     * @throws \Exception
      */
-    public function theStColumnOfTheStRowInTheTableShouldContain($colIndex, $rowIndex, $table, $text)
+    public function theStColumnOfTheStRowInTheTableShouldContain($colIndex, $rowIndex, $table, $text): void
     {
         $rowSelector = "$table tbody tr";
         $rows = $this->getSession()->getPage()->findAll('css', $rowSelector);

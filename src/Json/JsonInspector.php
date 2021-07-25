@@ -1,36 +1,42 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\Json;
 
-use JsonSchema\Validator;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class JsonInspector
 {
-    private $evaluationMode;
+    private string $evaluationMode;
 
-    private $accessor;
+    private PropertyAccessor $accessor;
 
-    public function __construct($evaluationMode)
+    public function __construct(string $evaluationMode)
     {
         $this->evaluationMode = $evaluationMode;
         $this->accessor = new PropertyAccessor(false, true);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function evaluate(Json $json, $expression)
     {
         if ($this->evaluationMode === 'javascript') {
-            $expression = str_replace('->', '.', $expression);
+            $expression = \str_replace('->', '.', $expression);
         }
 
         try {
             return $json->read($expression, $this->accessor);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \Exception("Failed to evaluate expression '$expression'");
         }
     }
 
-    public function validate(Json $json, JsonSchema $schema)
+    /**
+     * @throws \Exception
+     */
+    public function validate(Json $json, JsonSchema $schema): bool
     {
         $validator = new \JsonSchema\Validator();
 

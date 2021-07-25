@@ -1,26 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Behatch\HttpCall;
 
 class HttpCallResultPool
 {
-    /**
-     * @var HttpCallResult|null
-     */
-    private $result;
+    private ?HttpCallResult $result;
 
-    /**
-     * @param HttpCallResult $result
-     */
-    public function store(HttpCallResult $result)
+    public function store(HttpCallResult $result): void
     {
         $this->result = $result;
     }
 
-    /**
-     * @return HttpCallResult|null
-     */
-    public function getResult()
+    public function getResult(): ?HttpCallResult
     {
         return $this->result;
     }

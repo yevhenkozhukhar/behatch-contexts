@@ -68,8 +68,8 @@
         Тогда я не должен видеть "HTTP_XXX_LARGE_NUMERIC"
 
     Сценарий: Регистронезависимость имён заголовков
-        Как описано в rfc2614 §4.2
-        https://tools.ietf.org/html/rfc2616#section-4.2
+    Как описано в rfc2614 §4.2
+    https://tools.ietf.org/html/rfc2616#section-4.2
 
         Когда я отправляю GET запрос на "rest/index.php"
         Тогда заголовок "content-type" должен содержать "text"
