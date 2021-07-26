@@ -4,7 +4,7 @@
     "keywords": [
         "BDD",
         "Behat",
-        "Symfony2",
+        "Symfony",
         "Context"
     ],
     "type": "library",
@@ -37,11 +37,7 @@
         "bin-dir": "bin/"
     },
     "replace": {
-        "sanpi/behatch-contexts": "self.version"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.0.x-dev"
-        }
+        "sanpi/behatch-contexts": "self.version",
+        "behatch/contexts": "self.version"
     }
 }
