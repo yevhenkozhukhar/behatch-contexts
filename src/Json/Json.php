@@ -3,21 +3,22 @@ declare(strict_types=1);
 
 namespace Behatch\Json;
 
+use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Json
 {
-    protected string|array $content;
+    protected mixed $content;
 
     /**
      * @throws \JsonException
      */
-    public function __construct($content)
+    public function __construct(PyStringNode|string $content)
     {
         $this->content = $this->decode((string)$content);
     }
 
-    public function getContent(): array|string
+    public function getContent(): mixed
     {
         return $this->content;
     }
@@ -61,9 +62,9 @@ class Json
      * @throws \JsonException
      * @throws \Exception
      */
-    private function decode($content): string|array
+    private function decode(PyStringNode|string $content): mixed
     {
-        $result = \json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $result = \json_decode($content, null, 512, JSON_THROW_ON_ERROR);
 
         if (\json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception("The string '$content' is not valid json");
