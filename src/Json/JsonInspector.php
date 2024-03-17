@@ -14,7 +14,7 @@ class JsonInspector
     public function __construct(string $evaluationMode)
     {
         $this->evaluationMode = $evaluationMode;
-        $this->accessor = new PropertyAccessor(false, true);
+        $this->accessor = new PropertyAccessor(PropertyAccessor::MAGIC_GET | PropertyAccessor::MAGIC_SET);
     }
 
     /**

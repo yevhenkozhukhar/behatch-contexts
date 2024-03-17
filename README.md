@@ -1,9 +1,10 @@
 ## Fork note
-This is a fork of https://github.com/rkeet/behatch-contexts, which in turn is a fork of https://github.com/Behatch/contexts.
+This is a fork of https://github.com/third-bridge/behatch-contexts, to add support of symfony 7
 
-https://github.com/Behatch/contexts is abandoned and archived. Rkeet's fork above fixed a number of issues regarding PHP 8 compatibility:
-  * Reflection does not have a getClass function anymore
-  * PHP8 in combination with `symfony/property-access` 5.3 means there's no more leniency about accessing elements in an array as an object, and viceversa. It now only works with objects. Fix for that.
+Fixed conflicts with:
+  *  `symfony/property-access: "^5.3|^6.0|^7.0"`
+  *  `symfony/http-foundation: "^5.3|^6.0|^7.0"`
+  *  `symfony/property-access: "^5.3|^6.0|^7.0"`
 
 We're forking here for two reasons: first, Rkeet's fork could disappear at any point as it seemingly is for his own use. Second, we needed to tag 4.1 as master (but not 4.0) contained the fixes for correctly working with `symfony/property-access`.
 
